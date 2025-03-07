@@ -1,3 +1,5 @@
-export default function UserProfile(){
-    return <div><h1>UserProfile</h1></div>
+import { UserProfile } from "@clerk/nextjs";
+
+export default function Profile(){
+    return <UserProfile />
 }
