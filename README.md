@@ -5,7 +5,7 @@
 	- [ ] investigations
 	- [ ] evidence
 - [ ] connect app to a db
-- [ ] insert investigation into row using form content
+- [ ] insert investigation into db row using form submit
 - [ ] switch input types in investi-form to match the content they are collecting
 - [ ] create user dashboard
 - [ ] figure out collecting images and audio for evidence storage
