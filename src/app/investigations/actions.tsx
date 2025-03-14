@@ -1,8 +1,7 @@
 "use server"
 
 import { createServerSupabaseClient } from "@/utils/supabase/server"
-import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
+
 
 
 
@@ -23,10 +22,6 @@ export async function handleSubmit(formData: FormData) {
         return { success:false, error: error.message }
     } else {
         console.log("Form Submission Successful: ", investigation)
-        return { success:true }
     }
 
-    revalidatePath("/investigations")
-
-    redirect("/investigations")
 }

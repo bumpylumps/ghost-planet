@@ -17,6 +17,8 @@
 - [ ] build UI
 - [ ] integrate UI
 - [ ] create user dashboard
+- [ ] configure app to protect routes with clerk, handle sign ins w/ clerk (custom flow)
+	- [ ] set up middleware properly for clerk auth
 - [x] Set up form with 4 inputs
 - [x] connect app to a db (supabase)
 - [x] switch input types in investi-form to match the content they are collecting
