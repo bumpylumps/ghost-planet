@@ -4,6 +4,8 @@ export default function InvestigationPage() {
     return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold mb-6">New Investigation</h1>
+        
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <form action={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="title" className="block text-sm font-medium">

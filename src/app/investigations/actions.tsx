@@ -21,6 +21,9 @@ export async function handleSubmit(formData: FormData) {
     if(error) {
         console.error("Error inserting data: ", error.message)
         return { success:false, error: error.message }
+    } else {
+        console.log("Form Submission Successful: ", investigation)
+        return { success:true }
     }
 
     revalidatePath("/investigations")

@@ -1,20 +1,30 @@
 
 ## TODO: 
-- [x] Set up form with 4 inputs
 - [ ] create schema for: 
-	- [ ] investigations
 	- [ ] evidence
-- [ ] connect app to a db
-- [ ] insert investigation into db row using form submit
-- [ ] switch input types in investi-form to match the content they are collecting
-- [ ] create user dashboard
 - [ ] figure out collecting images and audio for evidence storage
 - [ ] figure out how to handle clerk user info and ghostplanet user info
 	- [ ] start with clerk users
-	- [ ] create and test 
-		- https://clerk.com/docs/webhooks/sync-data
+		- [ ] test: add user_id field to investigation schema, populate w/ clerk userid to keep track of user on form submissions
+- [ ] add typescript types for form validation:
+	- [ ] investigations
+	- [ ] evidence
+	- [ ] user
+	- [ ] crews
+- [ ] Throw Errors for form validation as well
+- [ ] Understand why the form action is throwing esLint error more thoroughly
 - [ ] design UI
 - [ ] build UI
 - [ ] integrate UI
+- [ ] create user dashboard
+- [x] Set up form with 4 inputs
+- [x] connect app to a db (supabase)
+- [x] switch input types in investi-form to match the content they are collecting
+- [x] insert investigation into db row using form submit
 
- 
+
+## GOALS down the road
+- [ ] integrate an interactive map to capture location instead of string
+- [ ] incorporate clerk orgs to keep track of crews
+- [ ] mobile version
+- [ ] get newkirk or Tenney to user test and offer feedback
