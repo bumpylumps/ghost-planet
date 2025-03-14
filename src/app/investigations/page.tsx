@@ -1,3 +1,5 @@
+"use client"
+
 import { handleSubmit } from "./actions"
 
 export default function InvestigationPage() {
