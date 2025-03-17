@@ -1,5 +1,8 @@
 
 ## TODO: 
+
+- [ ] Understand why the form action is throwing esLint error more thoroughly
+	- [ ] fix error instead of muting it
 - [ ] create schema for: 
 	- [ ] evidence
 - [ ] figure out collecting images and audio for evidence storage
@@ -12,7 +15,7 @@
 	- [ ] user
 	- [ ] crews
 - [ ] Throw Errors for form validation as well
-- [ ] Understand why the form action is throwing esLint error more thoroughly
+
 - [ ] design UI
 - [ ] build UI
 - [ ] integrate UI
