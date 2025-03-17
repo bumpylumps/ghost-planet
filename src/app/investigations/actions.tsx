@@ -5,7 +5,7 @@ import { createServerSupabaseClient } from "@/utils/supabase/server"
 
 
 
-export async function handleSubmit(formData: FormData) {
+export async function createInvestigation(formData: FormData) {
     const supabase = createServerSupabaseClient()
 
     const investigation = {

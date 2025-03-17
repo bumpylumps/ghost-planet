@@ -1,8 +1,8 @@
 
 ## TODO: 
 
-- [ ] Understand why the form action is throwing esLint error more thoroughly
-	- [ ] fix error instead of muting it
+- [ ] Understand why result in /investigations/page.tsx is throwing an error
+- [ ] implement server side form validation
 - [ ] create schema for: 
 	- [ ] evidence
 - [ ] figure out collecting images and audio for evidence storage
@@ -14,8 +14,9 @@
 	- [ ] evidence
 	- [ ] user
 	- [ ] crews
-- [ ] Throw Errors for form validation as well
-
+- [x] Throw Errors for form validation as well
+- [x] switching to onSubmit instead of action needed to happen for client side form validation anyway,
+	but type error was being thrown for action on form
 - [ ] design UI
 - [ ] build UI
 - [ ] integrate UI
