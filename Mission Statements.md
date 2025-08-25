@@ -1,0 +1,43 @@
+- Insane CLI SDK API for no reason (other than being reall fun to use for devs):
+	- some good customizing on browser GUI but
+		- insane customizing for investigations, locations, and users available in terminal:
+			- templates for investigations
+			- templates for locations (private)
+			- templates for evidence:
+				- radio form:
+					- audio
+					- video
+					- photo
+					- text
+- Allow everyone the chance to try out a paranormal experiment
+	- Free application
+	- available in hypertext/ lo-fi formats for slow internet
+- Public locations will be allowed for users that have been verified as "safe" members 
+	- no hateful language
+	- no condescending language
+	- only welcoming, enthusiastic or community positive activity allowed
+	- gameify the verification:
+		- some metric of stored investigations
+		- some metric of visited locations
+		- some metric of identification (abstracted from users)
+			- an almost celebrity persona 
+				- something unique needed 
+- sincerity for forums
+	- religion is respected and tolerated as long as it is not:
+		- abusively persuasive
+		- inspiring violence 
+		- inspiring hate
+		- manipulating users
+		- cult - manipulative
+	- productive japes and jokes
+	- knowledge and advice standards:
+		- productive
+		- non repetitive
+		- reasonably replicable
+		- non religious:
+			- no "messages from god"
+			- no "changing your ways"
+			- no "soul purity" bullshit
+			- no "chosen alien contactee" bullshit
+	- no self promotion of users
+	- no self promotion of media/content related paranormal projects

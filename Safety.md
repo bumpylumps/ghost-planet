@@ -1,0 +1,20 @@
+- investigation safety: 
+	- Emergency contact/ investi buddy required field for investigations
+	- Form will send email template to emergency contact/ buddy 
+	- Urge user to connect with them to confirm before solo investigations
+- user protections:
+	- no user locational data stored on map/ no user locational data stored on app (stored in DB w/ auth)
+	- provide google links for directions
+	- maybe allow private route planning for investigations that don't track the user's phone and use a neighborhood/town as a basic point of origin
+- age verification:
+	- 18+ for storing data
+	- 21+ for forums
+	- 0+ public map, story data, famous locations data
+- limited social media interaction possibilities
+	- no DM's 
+	- no phone, email, social media connections public
+		- emergency contacts for solo investigators
+- data storage:
+	- storage limits
+	- forced identification for photos, audio, text
+		- no unsafe data (strict form validations for client -> BE )
