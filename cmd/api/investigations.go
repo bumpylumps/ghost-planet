@@ -3,9 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strconv"
-
-	"github.com/julienschmidt/httprouter"
 )
 
 func (app *application) createInvestigationHandler(w http.ResponseWriter, r *http.Request) {
@@ -13,12 +10,7 @@ func (app *application) createInvestigationHandler(w http.ResponseWriter, r *htt
 }
 
 func (app *application) showInvestigationHandler(w http.ResponseWriter, r *http.Request) {
-
-	// slice request parameter names/values
-	params := httprouter.ParamsFromContext(r.Context())
-
-	//if id param can't convert, err
-	id, err := strconv.ParseInt(params.ByName("id"), 10, 64)
+	id, err := app.readIDParam(r)
 	if err != nil || id < 1 {
 		http.NotFound(w, r)
 		return
