@@ -14,16 +14,16 @@ func (app *application) createInvestigationHandler(w http.ResponseWriter, r *htt
 
 func (app *application) showInvestigationHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
-	if err != nil || id < 1 {
-		http.NotFound(w, r)
+	if err != nil {
+		app.notFoundResponse(w, r)
 		return
 	}
 
-	investigation := app.mockInvestigation(id)
+	investigation := app.mockInvestigation(id) // data.Investigation for non tests when ready
 
-	err = app.writeJSON(w, http.StatusOK, investigation, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"investigation": investigation}, nil)
 	if err != nil {
-		app.logger.Println(w, "The server encounterd a problem and could not process your request", http.StatusInternalServerError)
+		app.serverErrorResponse(w, r, err)
 	}
 }
 

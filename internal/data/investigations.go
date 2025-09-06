@@ -37,13 +37,13 @@ type Location struct {
 	LatLong                     []string        `json:"lat_long_coordinates"` // [Lattitude, Longitude]
 	PastInvestigationsUser      []Investigation `json:"past_investigations_user"`
 	PastInvestigationsCommunity []Investigation `json:"past_investigations_community"`
-	Popularity                  int64           `json:"popularity"` // Number of Stars? Number of past investigations?
+	Popularity                  Popularity      `json:"popularity"` // customize to add "stars" for now
 	Visibility                  bool            `json:"visibility"` // Public/Private Location
 }
 
 type Evidence struct {
 	ID         int64    `json:"id"`
-	TextNotes  []string `json:"text_notes"`
+	TextNotes  []string `json:"text_notes"`  // TODO: Flesh these out with their own types
 	AudioNotes []string `json:"audio_notes"` // slice of audio urls
 	Photos     []string `json:"photos"`      // slice of photo urls
 	EVPS       []string `json:"evps"`        // slice of audio urls

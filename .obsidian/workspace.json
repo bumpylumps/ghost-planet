@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Data Schema.md",
+                "file": "notes/Dev Posts.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Data Schema"
+              "title": "Dev Posts"
             }
           }
         ]
@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "30edc8c0fa2fd890",
@@ -171,13 +172,21 @@
   },
   "active": "9ced9603229b3ebc",
   "lastOpenFiles": [
-    "Mission Statements.md",
+    "cmd/api/errors/errors.go",
+    "cmd/api/errors/go",
+    "cmd/api/errors",
+    "cmd/api/errors.go",
+    "internal/data/popularity.go",
+    "notes/Development.md",
+    "notes/Dev Posts.md",
+    "notes/Safety.md",
+    "notes/Mission Statements.md",
+    "notes/Abstract.md",
+    "notes",
+    "notes/Data Schema.md",
     "internal/data/investigations.go",
     "internal/data/investigations.gi",
     "internal/data",
-    "Abstract.md",
-    "Data Schema.md",
-    "README.md",
-    "Safety.md"
+    "README.md"
   ]
 }
