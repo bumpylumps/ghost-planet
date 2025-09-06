@@ -19,5 +19,5 @@ func (app *application) routes() *httprouter.Router {
 	router.HandlerFunc(http.MethodGet, "/v1/investigations/:id", app.showInvestigationHandler)
 
 	//return that dang ol httprouter instance
-	return routers
+	return router
 }
