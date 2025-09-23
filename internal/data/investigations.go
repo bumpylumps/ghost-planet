@@ -6,11 +6,11 @@ import (
 
 type Investigation struct {
 	ID               int64      `json:"id"`
-	User             User       `json:"user"`
-	Location         Location   `json:"location"`
+	User             *User      `json:"user,omitempty"` // fill with logged in user info
+	Location         *Location  `json:"location,omitempty"`
 	Phenomena        string     `json:"phenomena"`
-	CreatedAt        time.Time  `json:"created_at"`
-	Evidence         []Evidence `json:"evidence"`
+	CreatedAt        time.Time  `json:"created_at"`         // hidden input
+	Evidence         []Evidence `json:"evidence,omitempty"` // added later
 	EmergencyContact string     `json:"emergency_contact"`
 	Visibility       bool       `json:"visibility"` // Public or Private Investigation
 }

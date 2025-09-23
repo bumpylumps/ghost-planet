@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/Dev Posts.md",
+                "file": "notes/Development/TODO.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Dev Posts"
+              "title": "TODO"
             }
           }
         ]
@@ -78,8 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "30edc8c0fa2fd890",
@@ -172,21 +171,24 @@
   },
   "active": "9ced9603229b3ebc",
   "lastOpenFiles": [
+    "internal/validator/validator.go",
+    "internal/validator",
+    "notes/Development/Investigations.md",
+    "notes/Development/TODO.md",
+    "notes/Development",
+    "notes/Abstract.md",
+    "notes/Dev Posts.md",
     "cmd/api/errors/errors.go",
     "cmd/api/errors/go",
     "cmd/api/errors",
     "cmd/api/errors.go",
     "internal/data/popularity.go",
-    "notes/Development.md",
-    "notes/Dev Posts.md",
     "notes/Safety.md",
     "notes/Mission Statements.md",
-    "notes/Abstract.md",
     "notes",
     "notes/Data Schema.md",
     "internal/data/investigations.go",
     "internal/data/investigations.gi",
-    "internal/data",
     "README.md"
   ]
 }
