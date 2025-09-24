@@ -1,7 +1,10 @@
 package data
 
 import (
+	"math"
 	"time"
+
+	"ghostplanet.bumpsites.com/internal/validator"
 )
 
 type Investigation struct {
@@ -33,19 +36,74 @@ type Location struct {
 	ID                          int64           `json:"id"`
 	Name                        string          `json:"name"`
 	Address                     string          `json:"address"`
-	Lore                        string          `json:"lore"`                 // TODO figure out structure for lore
-	LatLong                     []string        `json:"lat_long_coordinates"` // [Lattitude, Longitude]
+	State                       string          `json:"state"`
+	City                        string          `json:"city"`
+	Zip                         string          `json:"zip"`
+	Lore                        string          `json:"lore"` // TODO figure out structure for lore
+	Latitude                    float64         `json:"latitude"`
+	Longitude                   float64         `json:"longitude"`
 	PastInvestigationsUser      []Investigation `json:"past_investigations_user"`
 	PastInvestigationsCommunity []Investigation `json:"past_investigations_community"`
 	Popularity                  Popularity      `json:"popularity"` // customize to add "stars" for now
 	Visibility                  bool            `json:"visibility"` // Public/Private Location
 }
 
+func ValidateLocation(v *validator.Validator, location *Location) {
+	v.Check(location.Name != "", "name", "must be provided")
+	v.Check(len(location.Name) <= 500, "name", "must not be more than 500 bytes long")
+
+	// TODO: check address for valid address format
+	// split string into parts
+	// check that first part is a number
+	// check that second part is a string
+	// check that last part is a string?
+
+	// check that state is valid string
+	// check that city is valid string
+	// check that zip is valid numbers
+
+	v.Check(len(location.Lore) <= 500, "lore", "must not be more than 500 bytes long")
+
+	v.Check(!math.IsNaN(location.Latitude), "latitude", "must be a valid number")
+	v.Check(!math.IsInf(location.Latitude, 0), "latitude", "must be a finite number")
+	v.Check(location.Latitude > -90 && location.Latitude < 90, "latitude", "must be between -90 and 90")
+
+	v.Check(!math.IsNaN(location.Longitude), "longitude", "must be a valid number")
+	v.Check(!math.IsInf(location.Longitude, 0), "longitude", "must be a finite number")
+	v.Check(location.Longitude > -180 && location.Longitude < 180, "longitude", "must be between -180 and 180")
+
+}
+
 type Evidence struct {
-	ID         int64    `json:"id"`
-	TextNotes  []string `json:"text_notes"`  // TODO: Flesh these out with their own types
-	AudioNotes []string `json:"audio_notes"` // slice of audio urls
-	Photos     []string `json:"photos"`      // slice of photo urls
-	EVPS       []string `json:"evps"`        // slice of audio urls
+	ID         int64       `json:"id"`
+	TextNotes  []TextNote  `json:"text_notes"`  // TODO: Flesh these out with their own types
+	AudioNotes []AudioNote `json:"audio_notes"` // slice of audio urls
+	Photos     []Photo     `json:"photos"`      // slice of photo urls
+	EVPS       []AudioNote `json:"evps"`        // slice of audio urls
 	Visibility bool
+}
+
+type TextNote struct {
+	ID         int64     `json:"id"`
+	CreatedAt  time.Time `json:"created_at"`
+	Subject    string    `json:"subject"`
+	LocationID int64     `json:"locationid"`
+	Body       string    `json:"body"`
+}
+
+type AudioNote struct {
+	ID        int64     `json:"id"`
+	SourceURL string    `json:"source_url"`
+	CreatedAt time.Time `json:"created_at"`
+	Length    string    `json:"length"`
+	Size      string    `json:"size"`
+}
+
+type Photo struct {
+	ID        int64  `json:"id"`
+	SourceURL string `json:"source_url"`
+	FileType  string `json:"fileType"`
+	Size      string `json:"size"`
+	Caption   string `json:"caption"`
+	Thumbnail string `json:"thumbnail"`
 }
