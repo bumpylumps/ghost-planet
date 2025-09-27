@@ -120,7 +120,8 @@ func (app *application) createLocationHandler(w http.ResponseWriter, r *http.Req
 		Name                        string               `json:"name"`
 		Address                     string               `json:"address"`
 		Lore                        string               `json:"lore"`
-		LatLong                     []string             `json:"lat_long_coordinates"`
+		Latitude                    float64              `json:"latitude"`
+		Longitude                   float64              `json:"longitude"`
 		PastInvestigationsUser      []data.Investigation `json:"past_investigations_user,omitempty"`
 		PastInvestigationsCommunity []data.Investigation `json:"past_investigations_community,omitempty"`
 		Popularity                  data.Popularity      `json:"popularity,omitempty"`
@@ -133,16 +134,25 @@ func (app *application) createLocationHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	location := &data.Location{
+		Name:                        input.Name,
+		Address:                     input.Address,
+		Lore:                        input.Lore,
+		Latitude:                    input.Latitude,
+		Longitude:                   input.Longitude,
+		PastInvestigationsUser:      input.PastInvestigationsUser,
+		PastInvestigationsCommunity: input.PastInvestigationsCommunity,
+		Popularity:                  input.Popularity,
+		Visibility:                  input.Visibility,
+	}
+
 	v := validator.New()
 
-	v.Check(input.Name != "", "name", "must be provided")
-	v.Check(validator.Unique(input.LatLong), "lat_long_coordinates", "coordinates can not be identical")
-	v.Check(len(input.LatLong) <= 2, "lat_long_coordinates", "must not contain more than 2 coordinates")
-
-	if !v.Valid() {
+	if data.ValidateLocation(v, location); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
+
 	fmt.Fprintf(w, "%+v\n", input)
 }
 

@@ -32,11 +32,24 @@ type User struct {
 	CommunityLocations []Location      `json:"community_locations"` // locations that have been contributed to the Public locations list
 }
 
+func ValidateUser(v *validator.Validator, user *User) {
+	v.Check(user.Firstname != "", "firstname", "must be provided")
+	v.Check(len(user.Firstname) <= 500, "firstname", "must not be more than 500 bytes long")
+
+	v.Check(user.Lastname != "", "lastname", "must be provided")
+	v.Check(len(user.Lastname) <= 500, "lastname", "must not be more than 500 bytes")
+
+	v.Check(user.Username != "", "username", "must be provided")
+	v.Check(len(user.Username) <= 500, "username", "must not be more than 500 bytes long")
+
+	v.Check(len(user.Status) <= 500, "status", "must not be more than 500 bytes long")
+}
+
 type Location struct {
 	ID                          int64           `json:"id"`
 	Name                        string          `json:"name"`
 	Address                     string          `json:"address"`
-	State                       string          `json:"state"`
+	State                       string          `json:"state"` // dropdown options
 	City                        string          `json:"city"`
 	Zip                         string          `json:"zip"`
 	Lore                        string          `json:"lore"` // TODO figure out structure for lore
@@ -52,6 +65,7 @@ func ValidateLocation(v *validator.Validator, location *Location) {
 	v.Check(location.Name != "", "name", "must be provided")
 	v.Check(len(location.Name) <= 500, "name", "must not be more than 500 bytes long")
 
+	v.Check(location.Address != "", "address", "must be provided")
 	// TODO: check address for valid address format
 	// split string into parts
 	// check that first part is a number
@@ -62,8 +76,10 @@ func ValidateLocation(v *validator.Validator, location *Location) {
 	// check that city is valid string
 	// check that zip is valid numbers
 
+	v.Check(location.Lore != "", "lore", "must be provided")
 	v.Check(len(location.Lore) <= 500, "lore", "must not be more than 500 bytes long")
 
+	// needs check for data type - generic malformed data error for when log/lat is not a number
 	v.Check(!math.IsNaN(location.Latitude), "latitude", "must be a valid number")
 	v.Check(!math.IsInf(location.Latitude, 0), "latitude", "must be a finite number")
 	v.Check(location.Latitude > -90 && location.Latitude < 90, "latitude", "must be between -90 and 90")
@@ -71,7 +87,6 @@ func ValidateLocation(v *validator.Validator, location *Location) {
 	v.Check(!math.IsNaN(location.Longitude), "longitude", "must be a valid number")
 	v.Check(!math.IsInf(location.Longitude, 0), "longitude", "must be a finite number")
 	v.Check(location.Longitude > -180 && location.Longitude < 180, "longitude", "must be between -180 and 180")
-
 }
 
 type Evidence struct {
@@ -107,3 +122,5 @@ type Photo struct {
 	Caption   string `json:"caption"`
 	Thumbnail string `json:"thumbnail"`
 }
+
+// TODO: Validator for Evidences
