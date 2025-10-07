@@ -171,24 +171,23 @@
   },
   "active": "9ced9603229b3ebc",
   "lastOpenFiles": [
-    "internal/validator/validator.go",
-    "internal/validator",
     "notes/Development/Investigations.md",
     "notes/Development/TODO.md",
-    "notes/Development",
+    "notes/Safety.md",
+    "notes/Mission Statements.md",
     "notes/Abstract.md",
+    "notes/Data Schema.md",
+    "README.md",
+    "internal/validator/validator.go",
+    "internal/validator",
+    "notes/Development",
     "notes/Dev Posts.md",
     "cmd/api/errors/errors.go",
     "cmd/api/errors/go",
     "cmd/api/errors",
     "cmd/api/errors.go",
     "internal/data/popularity.go",
-    "notes/Safety.md",
-    "notes/Mission Statements.md",
     "notes",
-    "notes/Data Schema.md",
-    "internal/data/investigations.go",
-    "internal/data/investigations.gi",
-    "README.md"
+    "internal/data/investigations.go"
   ]
 }
