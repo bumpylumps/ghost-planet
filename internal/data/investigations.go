@@ -9,11 +9,11 @@ import (
 
 type Investigation struct {
 	ID               int64      `json:"id"`
-	User             *User      `json:"user,omitempty"` // fill with logged in user info
-	Location         *Location  `json:"location,omitempty"`
+	UserID           int64      `json:"user,omitempty"`
+	LocationID       int64      `json:"location,omitempty"`
 	Phenomena        string     `json:"phenomena"`
-	CreatedAt        time.Time  `json:"created_at"`         // hidden input
-	Evidence         []Evidence `json:"evidence,omitempty"` // added later
+	CreatedAt        time.Time  `json:"created_at"` // hidden input
+	Evidence         []Evidence `json:"evidence,omitempty"`
 	EmergencyContact string     `json:"emergency_contact"`
 	Visibility       bool       `json:"visibility"` // Public or Private Investigation
 }
@@ -59,6 +59,8 @@ type Location struct {
 	PastInvestigationsCommunity []Investigation `json:"past_investigations_community"`
 	Popularity                  Popularity      `json:"popularity"` // customize to add "stars" for now
 	Visibility                  bool            `json:"visibility"` // Public/Private Location
+	CreatedByUserID             int64           `json:"created_by_user_id"`
+	OwnerUserID                 int64           `json:"owner_user_id"`
 }
 
 func ValidateLocation(v *validator.Validator, location *Location) {
@@ -90,12 +92,13 @@ func ValidateLocation(v *validator.Validator, location *Location) {
 }
 
 type Evidence struct {
-	ID         int64       `json:"id"`
-	TextNotes  []TextNote  `json:"text_notes"`  // TODO: Flesh these out with their own types
-	AudioNotes []AudioNote `json:"audio_notes"` // slice of audio urls
-	Photos     []Photo     `json:"photos"`      // slice of photo urls
-	EVPS       []AudioNote `json:"evps"`        // slice of audio urls
-	Visibility bool
+	ID              int64       `json:"id"`
+	TextNotes       []TextNote  `json:"text_notes"`
+	AudioNotes      []AudioNote `json:"audio_notes"`
+	Photos          []Photo     `json:"photos"`
+	EVPS            []AudioNote `json:"evps"`
+	Visibility      bool        `json:"visibility"`
+	CreatedByUserID int64       `json:"created_by_user_id"`
 }
 
 type TextNote struct {

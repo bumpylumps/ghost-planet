@@ -1,4 +1,5 @@
 - finish build as per lets-go-further
+- Set up SQL migrations for investigations, locations, users, tokens
 - Once Users and locations can be created and stored, finish createInvestigationsHandler func
 - Figure out better data structure for Evidence: 
 	- don't like slices of whatever strings
@@ -16,4 +17,5 @@
 	- create route to get full investigation with entitie refs if really want it
 
 - Maybe break up Investigations.go into seperate files for each entity (location, user, etc)
-- 
+- Add user id field to locations and evidence? 
+- For public locations, use Ghostbuddy user as owner
