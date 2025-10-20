@@ -19,3 +19,7 @@
 - Maybe break up Investigations.go into seperate files for each entity (location, user, etc)
 - Add user id field to locations and evidence? 
 - For public locations, use Ghostbuddy user as owner
+
+## Testing todos
+- add stuff to mock functions for unit testing 
+- add funcs for mock locations, investigations, etc. 

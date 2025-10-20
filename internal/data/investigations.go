@@ -1,10 +1,13 @@
 package data
 
 import (
+	"database/sql"
 	"math"
 	"time"
 
 	"ghostplanet.bumpsites.com/internal/validator"
+
+	"github.com/lib/pq"
 )
 
 type Investigation struct {
@@ -99,6 +102,8 @@ type Evidence struct {
 	EVPS            []AudioNote `json:"evps"`
 	Visibility      bool        `json:"visibility"`
 	CreatedByUserID int64       `json:"created_by_user_id"`
+	CreatedAt       time.Time   `json:"created_at"`
+	Version         int64       `json:"version"`
 }
 
 type TextNote struct {
@@ -127,3 +132,57 @@ type Photo struct {
 }
 
 // TODO: Validator for Evidences
+
+type EvidenceModel struct {
+	DB *sql.DB
+}
+
+func (e EvidenceModel) Insert(evidence *Evidence) error {
+	query := `
+		INSERT INTO evidence (visibility, text_notes, audio_notes, photos, evps)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, created_at, version`
+
+	args := []interface{}{evidence.Visibility, pq.Array(evidence.TextNotes), pq.Array(evidence.AudioNotes), pq.Array(evidence.Photos), pq.Array(evidence.EVPS)}
+
+	return e.DB.QueryRow(query, args...).Scan(&evidence.ID, &evidence.CreatedAt, &evidence.Version)
+}
+
+func (e EvidenceModel) Get(id int64) (*Evidence, error) {
+	return &Evidence{
+		ID:              id,
+		TextNotes:       []TextNote{},
+		AudioNotes:      []AudioNote{},
+		Photos:          []Photo{},
+		EVPS:            []AudioNote{},
+		Visibility:      true,
+		CreatedByUserID: 1,
+	}, nil
+}
+
+func (e EvidenceModel) Update(evidence *Evidence) error {
+	return nil
+}
+
+func (e EvidenceModel) Delete(id int64) error {
+	return nil
+}
+
+// Testing
+type MockEvidenceModel struct{}
+
+func (e MockEvidenceModel) Insert(evidence *Evidence) error {
+	return nil
+}
+
+func (e MockEvidenceModel) Get(id int64) (*Evidence, error) {
+	return &Evidence{}, nil
+}
+
+func (e MockEvidenceModel) Update(evidence *Evidence) error {
+	return nil
+}
+
+func (e MockEvidenceModel) Delete(id int64) error {
+	return nil
+}
