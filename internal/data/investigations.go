@@ -3,6 +3,7 @@ package data
 import (
 	"database/sql"
 	"math"
+	"strings"
 	"time"
 
 	"ghostplanet.bumpsites.com/internal/validator"
@@ -94,6 +95,11 @@ func ValidateLocation(v *validator.Validator, location *Location) {
 	v.Check(location.Longitude > -180 && location.Longitude < 180, "longitude", "must be between -180 and 180")
 }
 
+func GetLocation(locationID int64) (*Location, error) {
+	//db location lookup
+	return &Location{}, nil
+}
+
 type Evidence struct {
 	ID              int64       `json:"id"`
 	TextNotes       []TextNote  `json:"text_notes"`
@@ -119,19 +125,85 @@ type AudioNote struct {
 	SourceURL string    `json:"source_url"`
 	CreatedAt time.Time `json:"created_at"`
 	Length    string    `json:"length"`
-	Size      string    `json:"size"`
+	Size      int64     `json:"size"`
 }
 
 type Photo struct {
-	ID        int64  `json:"id"`
-	SourceURL string `json:"source_url"`
-	FileType  string `json:"fileType"`
-	Size      string `json:"size"`
-	Caption   string `json:"caption"`
-	Thumbnail string `json:"thumbnail"`
+	ID           int64  `json:"id"`
+	SourceURL    string `json:"source_url"`
+	FileType     string `json:"fileType"`
+	Size         int64  `json:"size"`
+	Caption      string `json:"caption"`
+	ThumbnailURL string `json:"thumbnail"`
 }
 
-// TODO: Validator for Evidences
+// TODO: test ValidateAudioNote, ValidateTextNote, ValidatePhoto
+func ValidateTextNote(v *validator.Validator, textNote *TextNote) {
+	v.Check(textNote.Subject != "", "subject", "must be provided")
+	v.Check(len(textNote.Subject) <= 500, "subject", "must not be more than 500 bytes long")
+
+	v.Check(textNote.Body != "", "body", "must be provided")
+	v.Check(len(textNote.Body) <= 10000, "body", "must not be more than 10,000 bytes long")
+
+	location, err := GetLocation(textNote.LocationID)
+	v.Check(err == nil, "locationID", "location not found")
+	if err == nil {
+		ValidateLocation(v, location)
+	}
+
+}
+
+func ValidateAudioNote(v *validator.Validator, audioNote *AudioNote) {
+	v.Check(audioNote.SourceURL != "", "source_url", "must be provided")
+	v.Check(len(audioNote.SourceURL) <= 2000, "source_url", "must not be more than 2000 bytes long")
+
+	const maxSize = 5 * 1024 * 1024
+	v.Check(audioNote.Size > 0 && audioNote.Size <= maxSize, "size", "must be between 1 byte and 5 MB")
+	// add size check
+	// the rest of the info is programattically generated
+}
+
+func ValidatePhoto(v *validator.Validator, photo *Photo) {
+	// check that sourceURL is valid string
+	v.Check(photo.SourceURL != "", "source_url", "must be provided")
+	v.Check(len(photo.SourceURL) <= 2000, "source_url", "must not be more than 2000 bytes long")
+
+	allowedTypes := map[string]bool{
+		"jpeg": true, "jpg": true, "png": true, "webp": true,
+	}
+
+	v.Check(allowedTypes[strings.ToLower(photo.FileType)], "fileType", "must be a valid image type")
+
+	const maxSize = 5 * 1024 * 1024
+	v.Check(photo.Size > 0 && photo.Size <= maxSize, "size", "must be between 1 byte and 5 MB")
+
+	// check that caption is a valid string, if provided
+	v.Check(photo.Caption != "", "caption", "must be provided")
+	v.Check(len(photo.Caption) <= 500, "caption", "must not be more than 500 bytes")
+	// thumbnail is programmatically generated? Still a url
+
+}
+
+func ValidateEvidence(v *validator.Validator, evidence *Evidence) {
+	hasEvidence := len(evidence.TextNotes) > 0 || len(evidence.AudioNotes) > 0 || len(evidence.Photos) > 0 || len(evidence.EVPS) > 0
+	v.Check(hasEvidence, "evidence", "must contain at least one note, photo, or EVP")
+
+	for _, note := range evidence.TextNotes {
+		ValidateTextNote(v, &note)
+	}
+
+	for _, note := range evidence.AudioNotes {
+		ValidateAudioNote(v, &note)
+	}
+
+	for _, photo := range evidence.Photos {
+		ValidatePhoto(v, &photo)
+	}
+
+	for _, evp := range evidence.EVPS {
+		ValidateAudioNote(v, &evp)
+	}
+}
 
 type EvidenceModel struct {
 	DB *sql.DB
@@ -172,6 +244,9 @@ func (e EvidenceModel) Delete(id int64) error {
 type MockEvidenceModel struct{}
 
 func (e MockEvidenceModel) Insert(evidence *Evidence) error {
+	evidence.ID = 1
+	evidence.CreatedAt = time.Now()
+	evidence.Version = 1
 	return nil
 }
 

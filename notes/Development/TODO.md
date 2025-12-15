@@ -1,23 +1,17 @@
 - finish build as per lets-go-further
+- write package for audio uploads
+- combine servemux + multipart form processing + image/ imaging core package
+- Set up image processing on the server, which parses JSON sent by client, generates a thumbnail, and provides a source url
+
+Data:
 - Set up SQL migrations for investigations, locations, users, tokens
 - Once Users and locations can be created and stored, finish createInvestigationsHandler func
-- Figure out better data structure for Evidence: 
-	- don't like slices of whatever strings
-	- would rather have a structure for:
-		- Text notes
-		- audio notes
-		- EVPS - can share audio notes structure 
-		- photos 
 - Figure out structure for Lore 
 	- can share text notes structure
 	
-- figure out proper validation for requests on Locations, Evidence, Investigations, Users, etc. 
+Doing this now - 12/15/25
+- test all new validators in evidence structs
 
-- Change user/location/evidence refs in Investigation schema to Id's instead of full entities
-	- create route to get full investigation with entitie refs if really want it
-
-- Maybe break up Investigations.go into seperate files for each entity (location, user, etc)
-- Add user id field to locations and evidence? 
 - For public locations, use Ghostbuddy user as owner
 
 ## Testing todos

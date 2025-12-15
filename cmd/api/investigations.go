@@ -74,11 +74,11 @@ func (app *application) createInvestigationHandler(w http.ResponseWriter, r *htt
 // create structure for text notes
 func (app *application) createEvidenceHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		TextNotes  []string `json:"textnotes,omitempty"`
-		AudioNotes []string `json:"audionotes,omitempty"`
-		Photos     []string `json:"photos,omitempty"`
-		EVPS       []string `json:"evps,omitempty"`
-		Visibility *bool    `json:"visibility"`
+		TextNotes  []data.TextNote  `json:"textnotes,omitempty"`
+		AudioNotes []data.AudioNote `json:"audionotes,omitempty"`
+		Photos     []data.Photo     `json:"photos,omitempty"`
+		EVPS       []data.AudioNote `json:"evps,omitempty"`
+		Visibility *bool            `json:"visibility"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -87,11 +87,37 @@ func (app *application) createEvidenceHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	evidence := &data.Evidence{
+		TextNotes:  input.TextNotes,
+		AudioNotes: input.AudioNotes,
+		Photos:     input.Photos,
+		EVPS:       input.EVPS,
+		Visibility: *input.Visibility,
+	}
+
 	v := validator.New()
 
 	v.Check(input.Visibility != nil, "visibility", "must be provided")
 
-	fmt.Fprintf(w, "%+v\n", input)
+	if data.ValidateEvidence(v, evidence); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	err = app.models.Evidences.Insert(evidence)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/evidences/%d", evidence.ID))
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"evidence": evidence}, headers)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 func (app *application) showEvidenceHandler(w http.ResponseWriter, r *http.Request) {
