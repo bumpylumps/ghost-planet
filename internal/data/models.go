@@ -10,23 +10,23 @@ var (
 )
 
 type Models struct {
-	Evidences interface {
-		Insert(*Evidence) error
-		Get(int64) (*Evidence, error)
-		Update(*Evidence) error
-		Delete(int64) error
+	Evidence interface {
+		Insert(evidence *Evidence) error
+		Get(id int64) (*Evidence, error)
+		Update(evidence *Evidence) error
+		Delete(id int64) error
 	}
 }
 
 func NewModels(db *sql.DB) Models {
 	return Models{
-		Evidences: EvidenceModel{DB: db},
+		Evidence: EvidenceModel{DB: db},
 	}
 }
 
 // testing
 func NewMockModels() Models {
 	return Models{
-		Evidences: MockEvidenceModel{},
+		Evidence: MockEvidenceModel{},
 	}
 }

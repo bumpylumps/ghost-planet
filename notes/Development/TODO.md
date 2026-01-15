@@ -1,5 +1,5 @@
 - finish build as per lets-go-further
-- write package for audio uploads
+- write package for audio uploads - bapio (backend audio processor)
 - combine servemux + multipart form processing + image/ imaging core package
 - Set up image processing on the server, which parses JSON sent by client, generates a thumbnail, and provides a source url
 
@@ -17,3 +17,6 @@ Doing this now - 12/15/25
 ## Testing todos
 - add stuff to mock functions for unit testing 
 - add funcs for mock locations, investigations, etc. 
+
+
+ 
