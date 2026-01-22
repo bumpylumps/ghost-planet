@@ -13,15 +13,28 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/Development/Evidence.md",
+                "file": "notes/Development/TODO.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Evidence"
+              "title": "TODO"
+            }
+          },
+          {
+            "id": "b9d965e404566133",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.11.4"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.11.4"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -169,10 +182,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "9ced9603229b3ebc",
+  "active": "b9d965e404566133",
   "lastOpenFiles": [
-    "notes/Development/Investigations.md",
     "notes/Development/Evidence.md",
+    "notes/Development/Investigations.md",
     "notes/Development/TODO.md",
     "notes/Safety.md",
     "notes/Mission Statements.md",
