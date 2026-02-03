@@ -1,5 +1,5 @@
 import React from 'react'
-import EvidencePostForm from '../components/EvidencePostForm';
+import TextEvidencePostForm from '../components/TextEvidencePostForm';
 import EvidenceList from '../components/EvidenceList'
 
 function Evidence() {
@@ -7,7 +7,7 @@ function Evidence() {
         <div>
             <h1>Evidence</h1>
             <EvidenceList/>
-            <EvidencePostForm />
+            <TextEvidencePostForm />
         </div>
     )
 }
