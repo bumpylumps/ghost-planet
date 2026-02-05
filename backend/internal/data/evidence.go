@@ -34,7 +34,7 @@ type AudioNote struct {
 	SourceURL string    `json:"source_url"`
 	Title     string    `json:"title"`
 	CreatedAt time.Time `json:"created_at"`
-	Length    string    `json:"length"`
+	Duration  string    `json:"duration"`
 	Size      int64     `json:"size"`
 }
 

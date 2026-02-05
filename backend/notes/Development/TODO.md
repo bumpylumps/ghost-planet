@@ -3,8 +3,18 @@
 - write package for photo uploads - photopup
 - combine servemux + multipart form processing + image/ imaging core package
 - Set up image processing on the server, which parses JSON sent by client, generates a thumbnail, and provides a source url
+- set up GET routes for:
+	- all evidence
+	- photos
+	- audionotes
+	- textnotes
+	- evps
 
 Data:
+- Set up seperate tables for:
+	- text notes
+	- audio notes/ evps
+	- photos
 - Set up SQL migrations for investigations, locations, users, tokens
 - Once Users and locations can be created and stored, finish createInvestigationsHandler func
 - Figure out structure for Lore 

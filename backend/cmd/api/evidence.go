@@ -12,11 +12,12 @@ import (
 
 func (app *application) createEvidenceHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		TextNotes  []data.TextNote  `json:"text_notes,omitempty"`
-		AudioNotes []data.AudioNote `json:"audio_notes,omitempty"`
-		Photos     []data.Photo     `json:"photos,omitempty"`
-		EVPS       []data.AudioNote `json:"evps,omitempty"`
-		Visibility *bool            `json:"visibility"`
+		TextNotes       []data.TextNote  `json:"text_notes,omitempty"`
+		AudioNotes      []data.AudioNote `json:"audio_notes,omitempty"`
+		Photos          []data.Photo     `json:"photos,omitempty"`
+		EVPS            []data.AudioNote `json:"evps,omitempty"`
+		Visibility      *bool            `json:"visibility"`
+		CreatedByUserId int64            `json:"created_by_user_id"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -26,11 +27,12 @@ func (app *application) createEvidenceHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	evidence := &data.Evidence{
-		TextNotes:  input.TextNotes,
-		AudioNotes: input.AudioNotes,
-		Photos:     input.Photos,
-		EVPS:       input.EVPS,
-		Visibility: *input.Visibility,
+		TextNotes:       input.TextNotes,
+		AudioNotes:      input.AudioNotes,
+		Photos:          input.Photos,
+		EVPS:            input.EVPS,
+		Visibility:      *input.Visibility,
+		CreatedByUserID: input.CreatedByUserId,
 	}
 
 	v := validator.New()
