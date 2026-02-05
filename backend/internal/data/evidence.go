@@ -2,7 +2,7 @@ package data
 
 import (
 	"database/sql"
-	"encoding/json"
+	// "encoding/json"
 	"strings"
 	"time"
 
@@ -10,41 +10,44 @@ import (
 )
 
 type Evidence struct {
-	ID              int64       `json:"id"`
-	TextNotes       []TextNote  `json:"text_notes"`
-	AudioNotes      []AudioNote `json:"audio_notes"`
-	Photos          []Photo     `json:"photos"`
-	EVPS            []AudioNote `json:"evps"`
-	Visibility      bool        `json:"visibility"`
-	CreatedByUserID int64       `json:"created_by_user_id"`
-	CreatedAt       time.Time   `json:"created_at"`
-	Version         int64       `json:"version"`
+	ID              int64     `json:"id"`
+	InvestigationID int64     `json:"investigation_id"`
+	LocationID      int64     `json:"location_id"`
+	CreatedByUserID int64     `json:"created_by_user_id"`
+	CreatedAt       time.Time `json:"created_at"`
+	Visibility      bool      `json:"visibility"`
+	Version         int32     `json:"version"`
 }
 
 type TextNote struct {
 	ID         int64     `json:"id"`
-	CreatedAt  time.Time `json:"created_at"`
+	EvidenceID int64     `json:"evidence_id"`
 	Subject    string    `json:"subject"`
-	LocationID int64     `json:"locationid"`
 	Body       string    `json:"body"`
+	LocationID int64     `json:"location_id"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 type AudioNote struct {
-	ID        int64     `json:"id"`
-	SourceURL string    `json:"source_url"`
-	Title     string    `json:"title"`
-	CreatedAt time.Time `json:"created_at"`
-	Duration  string    `json:"duration"`
-	Size      int64     `json:"size"`
+	ID            int64         `json:"id"`
+	EvidenceID    int64         `json:"evidence_id"`
+	Title         string        `json:"title"`
+	SourceURL     string        `json:"source_url"`
+	Duration      time.Duration `json:"duration"`
+	FileSizeBytes int64         `json:"file_size_bytes"`
+	IsEVP         bool          `json:"is_evp"`
+	CreatedAt     time.Time     `json:"created_at"`
 }
 
 type Photo struct {
-	ID           int64  `json:"id"`
-	SourceURL    string `json:"source_url"`
-	FileType     string `json:"fileType"`
-	Size         int64  `json:"size"`
-	Caption      string `json:"caption"`
-	ThumbnailURL string `json:"thumbnail"`
+	ID            int64     `json:"id"`
+	EvidenceID    int64     `json:"evidence_id"`
+	SourceURL     string    `json:"source_url"`
+	ThumbnailURL  string    `json:"thumbnail_url"`
+	Caption       string    `json:"caption"`
+	FileType      string    `json:"file_type"`
+	FileSizeBytes int64     `json:"file_size_bytes"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 func ValidateTextNote(v *validator.Validator, textNote *TextNote) {
@@ -67,7 +70,7 @@ func ValidateAudioNote(v *validator.Validator, audioNote *AudioNote) {
 	v.Check(len(audioNote.SourceURL) <= 2000, "source_url", "must not be more than 2000 bytes long")
 
 	const maxSize = 5 * 1024 * 1024
-	v.Check(audioNote.Size > 0 && audioNote.Size <= maxSize, "size", "must be between 1 byte and 5 MB")
+	v.Check(audioNote.FileSizeBytes > 0 && audioNote.FileSizeBytes <= maxSize, "size", "must be between 1 byte and 5 MB")
 	// add size check
 	// the rest of the info is programattically generated
 }
@@ -84,7 +87,7 @@ func ValidatePhoto(v *validator.Validator, photo *Photo) {
 	v.Check(allowedTypes[strings.ToLower(photo.FileType)], "fileType", "must be a valid image type")
 
 	const maxSize = 5 * 1024 * 1024
-	v.Check(photo.Size > 0 && photo.Size <= maxSize, "size", "must be between 1 byte and 5 MB")
+	v.Check(photo.FileSizeBytes > 0 && photo.FileSizeBytes <= maxSize, "size", "must be between 1 byte and 5 MB")
 
 	// check that caption is a valid string, if provided
 	v.Check(photo.Caption != "", "caption", "must be provided")
@@ -94,65 +97,22 @@ func ValidatePhoto(v *validator.Validator, photo *Photo) {
 }
 
 func ValidateEvidence(v *validator.Validator, evidence *Evidence) {
-	hasEvidence := len(evidence.TextNotes) > 0 || len(evidence.AudioNotes) > 0 || len(evidence.Photos) > 0 || len(evidence.EVPS) > 0
-	v.Check(hasEvidence, "evidence", "must contain at least one note, photo, or EVP")
 
-	for _, note := range evidence.TextNotes {
-		ValidateTextNote(v, &note)
-	}
-
-	for _, note := range evidence.AudioNotes {
-		ValidateAudioNote(v, &note)
-	}
-
-	for _, photo := range evidence.Photos {
-		ValidatePhoto(v, &photo)
-	}
-
-	for _, evp := range evidence.EVPS {
-		ValidateAudioNote(v, &evp)
-	}
 }
 
 type EvidenceModel struct {
 	DB *sql.DB
 }
 
+/*
+	 TODO: write insert to handle new evidence flow:
+		1) Parse JSON from client into Request struct that includes evidence slices
+		2) Insert evidence into parent evidence table, return generated ID
+		3) Loop through evidence slices, assign returned EvidenceID to each item and insert
+		4) Commit/Rollback based on success/failure of steps
+*/
 func (e EvidenceModel) Insert(evidence *Evidence) error {
-	query := `
-		INSERT INTO evidence (visibility, text_notes, audio_notes, photos, evps)
-		VALUES ($1, $2, $3, $4, $5)
-		RETURNING id, created_at, version`
-
-	textNotesJSON, err := json.Marshal(evidence.TextNotes)
-	if err != nil {
-		return err
-	}
-
-	audioNotesJSON, err := json.Marshal(evidence.AudioNotes)
-	if err != nil {
-		return err
-	}
-
-	photosJSON, err := json.Marshal(evidence.Photos)
-	if err != nil {
-		return err
-	}
-
-	evpsJSON, err := json.Marshal(evidence.EVPS)
-	if err != nil {
-		return err
-	}
-
-	args := []interface{}{
-		evidence.Visibility,
-		textNotesJSON,
-		audioNotesJSON,
-		photosJSON,
-		evpsJSON,
-	}
-
-	return e.DB.QueryRow(query, args...).Scan(&evidence.ID, &evidence.CreatedAt, &evidence.Version)
+	return nil
 }
 
 func (e EvidenceModel) Get(id int64) (*Evidence, error) {

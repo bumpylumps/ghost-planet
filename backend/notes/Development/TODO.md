@@ -1,4 +1,5 @@
 - finish build as per lets-go-further
+- write insert func for evidence 
 - write package for audio uploads - audiocupp (backend audio processor)
 - write package for photo uploads - photopup
 - combine servemux + multipart form processing + image/ imaging core package
