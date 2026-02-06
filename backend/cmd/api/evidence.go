@@ -1,63 +1,48 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
-
 	// "time"
-
-	"ghostplanet.bumpsites.com/internal/data"
-	"ghostplanet.bumpsites.com/internal/validator"
 )
 
 func (app *application) createEvidenceHandler(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		TextNotes       []data.TextNote  `json:"text_notes,omitempty"`
-		AudioNotes      []data.AudioNote `json:"audio_notes,omitempty"`
-		Photos          []data.Photo     `json:"photos,omitempty"`
-		EVPS            []data.AudioNote `json:"evps,omitempty"`
-		Visibility      *bool            `json:"visibility"`
-		CreatedByUserId int64            `json:"created_by_user_id"`
-	}
+	// 1. Define the INPUT struct (The "Filter")
+	// Use pointers (*bool, *int64) for mandatory fields to distinguish
+	// between a "zero value" and a missing field.
+	// var input struct {
+	// Add InvestigationID and LocationID here (mandatory in DB)
+	// Add slices (TextNotes, Photos, etc.)
+	// Add Visibility (*bool) and CreatedByUserId
+	// }
 
-	err := app.readJSON(w, r, &input)
-	if err != nil {
-		app.badRequestResponse(w, r, err)
-		return
-	}
+	// 2. Decode the incoming JSON into the input struct
+	// Use app.readJSON. Handle errors with app.badRequestResponse.
 
-	evidence := &data.Evidence{
-		TextNotes:       input.TextNotes,
-		AudioNotes:      input.AudioNotes,
-		Photos:          input.Photos,
-		EVPS:            input.EVPS,
-		Visibility:      *input.Visibility,
-		CreatedByUserID: input.CreatedByUserId,
-	}
+	// 3. Start Validation
+	// Initialize your validator.
 
-	v := validator.New()
+	// 4. Perform "Existence" checks (The Gatekeeper)
+	// Use v.Check to ensure mandatory pointers (like Visibility) are not nil.
 
-	v.Check(input.Visibility != nil, "visibility", "must be provided")
+	// 5. Check "Gatekeeper" validation status
+	// If !v.Valid(), call app.failedValidationResponse and RETURN.
+	// (This prevents the server from panicking in the next step!)
 
-	if data.ValidateEvidence(v, evidence); !v.Valid() {
-		app.failedValidationResponse(w, r, v.Errors)
-		return
-	}
+	// 6. Map Input to Data Model (The "Gold Standard")
+	// Now that you know pointers aren't nil, dereference them (*)
+	// and copy values into a &data.Evidence{} struct.
 
-	err = app.models.Evidence.Insert(evidence)
+	// 7. Perform "Business Logic" validation
+	// Use your data.ValidateEvidence(v, evidence) function.
+	// If !v.Valid(), return the validation response.
 
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-		return
-	}
+	// 8. Execute the Database Insert
+	// Call app.models.Evidence.Insert(evidence).
+	// Note: This is where you'll eventually handle the transaction for the slices!
 
-	headers := make(http.Header)
-	headers.Set("Location", fmt.Sprintf("/v1/evidences/%d", evidence.ID))
-
-	err = app.writeJSON(w, http.StatusCreated, envelope{"evidence": evidence}, headers)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-	}
+	// 9. Send Success Response
+	// Set the "Location" header for the new resource.
+	// Use app.writeJSON to send a 201 Created status and the evidence data.
 }
 
 func (app *application) showEvidenceHandler(w http.ResponseWriter, r *http.Request) {

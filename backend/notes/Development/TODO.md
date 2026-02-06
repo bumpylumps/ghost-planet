@@ -1,15 +1,19 @@
+# You are here: 
+- write Evidence.Insert()
+- write createEvidenceHandler
+
+## General Todos
 - finish build as per lets-go-further
-- write insert func for evidence 
+- finish flows for evidence inserts
 - write package for audio uploads - audiocupp (backend audio processor)
 - write package for photo uploads - photopup
-- combine servemux + multipart form processing + image/ imaging core package
-- Set up image processing on the server, which parses JSON sent by client, generates a thumbnail, and provides a source url
 - set up GET routes for:
 	- all evidence
 	- photos
 	- audionotes
 	- textnotes
 	- evps
+
 
 Data:
 - Set up seperate tables for:

@@ -113,6 +113,20 @@ type EvidenceModel struct {
 */
 func (e EvidenceModel) Insert(evidence *Evidence) error {
 	return nil
+	/*
+			// 1. Start the transaction
+			tx, err := db.BeginTx(ctx, nil)
+
+			// 2. Use tx.Exec or tx.QueryRow (NOT db.Exec) for the Parent
+			// 3. Use tx.Exec inside loops for the Children
+
+			// 4. The Finish
+				if err != nil {
+		    	tx.Rollback() // Undo everything if any step failed
+		    	return err
+		}
+		return tx.Commit() // Save everything forever
+	*/
 }
 
 func (e EvidenceModel) Get(id int64) (*Evidence, error) {
