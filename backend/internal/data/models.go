@@ -11,10 +11,10 @@ var (
 
 type Models struct {
 	Evidence interface {
-		Insert(evidence *Evidence) error
 		Get(id int64) (*Evidence, error)
 		Update(evidence *Evidence) error
 		Delete(id int64) error
+		FullSync(evidence *Evidence, audios []AudioNote, texts []TextNote, photos []Photo) error
 	}
 }
 

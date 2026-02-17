@@ -2,22 +2,35 @@ package main
 
 import (
 	"net/http"
+
+	"ghostplanet.bumpsites.com/internal/data"
 	// "time"
 )
 
 func (app *application) createEvidenceHandler(w http.ResponseWriter, r *http.Request) {
+
 	// 1. Define the INPUT struct (The "Filter")
 	// Use pointers (*bool, *int64) for mandatory fields to distinguish
 	// between a "zero value" and a missing field.
+	// keep the input struct here instead of in data/evidence to keep data layer clean
 	// var input struct {
 	// Add InvestigationID and LocationID here (mandatory in DB)
 	// Add slices (TextNotes, Photos, etc.)
 	// Add Visibility (*bool) and CreatedByUserId
 	// }
+	var input struct {
+		InvestigationID *int64           `json:"investigation_id"`
+		LocationID      *int64           `json:"location_id"`
+		TextNotes       []data.TextNote  `json:"text_notes"`
+		AudioNotes      []data.AudioNote `json:"audio_notes"`
+		Photos          []data.Photo     `json:"photos"`
+		Visibility      *bool            `json:"visibility"`
+		CreatedByUserID *int64           `json:"created_by_user_id"`
+	}
 
 	// 2. Decode the incoming JSON into the input struct
 	// Use app.readJSON. Handle errors with app.badRequestResponse.
-
+	return nil
 	// 3. Start Validation
 	// Initialize your validator.
 

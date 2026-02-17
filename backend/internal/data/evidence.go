@@ -104,29 +104,59 @@ type EvidenceModel struct {
 	DB *sql.DB
 }
 
-/*
-	 TODO: write insert to handle new evidence flow:
-		1) Parse JSON from client into Request struct that includes evidence slices
-		2) Insert evidence into parent evidence table, return generated ID
-		3) Loop through evidence slices, assign returned EvidenceID to each item and insert
-		4) Commit/Rollback based on success/failure of steps
-*/
-func (e EvidenceModel) Insert(evidence *Evidence) error {
+// private func so other packages can't access directly (pit of success)
+func (e EvidenceModel) insert(tx *sql.Tx, evidence *Evidence) error {
+	query := `
+		INSERT into evidence (investigation_id, location_id, created_by_user_id, visibility)
+        VALUES ($1, $2, $3, $4)
+        RETURNING id, created_at, version
+	`
+	args := []interface{}{
+		evidence.InvestigationID,
+		evidence.LocationID,
+		evidence.CreatedByUserID,
+		evidence.Visibility,
+	}
+
+	return tx.QueryRow(query, args...).Scan(&evidence.ID, &evidence.CreatedAt, &evidence.Version)
+}
+
+func (e EvidenceModel) InsertText(tx *sql.Tx, evidenceID int64, textNote *TextNote) error {
+	query := `
+		INSERT into evidence_textnotes (evidence_id, subject, body, location_id)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id, created_at 
+	`
+
+	args := []interface{}{
+		evidenceID,
+		textNote.Subject,
+		textNote.Body,
+		textNote.LocationID,
+	}
+
+	return tx.QueryRow(query, args...).Scan(&textNote.ID, &textNote.CreatedAt)
+}
+
+func (e EvidenceModel) FullSync(evidence *Evidence, audioNotes []AudioNote, textNotes []TextNote, photos []Photo) error {
+	tx, err := e.DB.Begin()
+
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback()
+
+	// run insert for parent evidence table, get ID
+	e.insert(tx, evidence)
+
+	// loop through evidence slices, insert as needed
+
+	// return success or failure message
+	// rollback for failures
+
+	tx.Commit()
 	return nil
-	/*
-			// 1. Start the transaction
-			tx, err := db.BeginTx(ctx, nil)
-
-			// 2. Use tx.Exec or tx.QueryRow (NOT db.Exec) for the Parent
-			// 3. Use tx.Exec inside loops for the Children
-
-			// 4. The Finish
-				if err != nil {
-		    	tx.Rollback() // Undo everything if any step failed
-		    	return err
-		}
-		return tx.Commit() // Save everything forever
-	*/
 }
 
 func (e EvidenceModel) Get(id int64) (*Evidence, error) {
@@ -144,7 +174,11 @@ func (e EvidenceModel) Delete(id int64) error {
 // testing
 type MockEvidenceModel struct{}
 
-func (e MockEvidenceModel) Insert(evidence *Evidence) error {
+func (e MockEvidenceModel) insert(evidence *Evidence) error {
+	return nil
+}
+
+func (e MockEvidenceModel) FullSync(evidence *Evidence, audios []AudioNote, texts []TextNote, photos []Photo) error {
 	return nil
 }
 

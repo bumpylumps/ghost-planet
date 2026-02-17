@@ -185,6 +185,9 @@
   },
   "active": "8798875075e51eae",
   "lastOpenFiles": [
+    "backend/notes/Development/Log.md",
+    "backend/notes/Development/TODO.md",
+    "backend/notes/Development/Evidence.md",
     "backend/migrations/000006_create_evidence_textnotes_table.down.sql",
     "backend/migrations/000006_create_evidence_textnotes_table.up.sql",
     "backend/migrations/000005_create_evidence_audio_table.down.sql",
@@ -195,7 +198,6 @@
     "backend/migrations/000003_create_audio_table.up.sql",
     "backend/migrations/000002_create_textnotes_table.down.sql",
     "backend/migrations/000002_create_textnotes_table.up.sql",
-    "backend/notes/Development/Evidence.md",
     "README.md"
   ]
 }

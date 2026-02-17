@@ -1,5 +1,8 @@
 # You are here: 
-- write Evidence.Insert()
+- write insert func for:
+	- audioNotes
+	- photos 
+- finish Evidence.FullSync()
 - write createEvidenceHandler
 
 ## General Todos
