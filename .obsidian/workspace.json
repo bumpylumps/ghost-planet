@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "backend/notes/Development/TODO.md",
+                "file": "backend/notes/Development/Evidence.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODO"
+              "title": "Evidence"
             }
           }
         ]
@@ -185,8 +185,8 @@
   },
   "active": "8798875075e51eae",
   "lastOpenFiles": [
-    "backend/notes/Development/Log.md",
     "backend/notes/Development/TODO.md",
+    "backend/notes/Development/Log.md",
     "backend/notes/Development/Evidence.md",
     "backend/migrations/000006_create_evidence_textnotes_table.down.sql",
     "backend/migrations/000006_create_evidence_textnotes_table.up.sql",

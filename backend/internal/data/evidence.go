@@ -2,6 +2,8 @@ package data
 
 import (
 	"database/sql"
+	"fmt"
+
 	// "encoding/json"
 	"strings"
 	"time"
@@ -121,7 +123,7 @@ func (e EvidenceModel) insert(tx *sql.Tx, evidence *Evidence) error {
 	return tx.QueryRow(query, args...).Scan(&evidence.ID, &evidence.CreatedAt, &evidence.Version)
 }
 
-func (e EvidenceModel) InsertText(tx *sql.Tx, evidenceID int64, textNote *TextNote) error {
+func (e EvidenceModel) insertText(tx *sql.Tx, evidenceID int64, textNote *TextNote) error {
 	query := `
 		INSERT into evidence_textnotes (evidence_id, subject, body, location_id)
 		VALUES ($1, $2, $3, $4)
@@ -138,6 +140,8 @@ func (e EvidenceModel) InsertText(tx *sql.Tx, evidenceID int64, textNote *TextNo
 	return tx.QueryRow(query, args...).Scan(&textNote.ID, &textNote.CreatedAt)
 }
 
+// create insertAudio() and insertPhoto()
+
 func (e EvidenceModel) FullSync(evidence *Evidence, audioNotes []AudioNote, textNotes []TextNote, photos []Photo) error {
 	tx, err := e.DB.Begin()
 
@@ -151,11 +155,19 @@ func (e EvidenceModel) FullSync(evidence *Evidence, audioNotes []AudioNote, text
 	e.insert(tx, evidence)
 
 	// loop through evidence slices, insert as needed
+	// for i := 0; i < len(textNotes); i++ {
+	// 	note := textNotes[i]
 
+	// 	//validators
+	// 	fmt.Println("%+v\n", note)
+	// 	// run db insert
+
+	// }
 	// return success or failure message
 	// rollback for failures
 
 	tx.Commit()
+	fmt.Printf("Evidence successfully inserted: %+v\n", evidence)
 	return nil
 }
 
