@@ -17,7 +17,7 @@ type Evidence struct {
 	LocationID      int64     `json:"location_id"`
 	CreatedByUserID int64     `json:"created_by_user_id"`
 	CreatedAt       time.Time `json:"created_at"`
-	Visibility      bool      `json:"visibility"`
+	Visibility      *bool     `json:"visibility"`
 	Version         int32     `json:"version"`
 }
 
@@ -99,7 +99,13 @@ func ValidatePhoto(v *validator.Validator, photo *Photo) {
 }
 
 func ValidateEvidence(v *validator.Validator, evidence *Evidence) {
-
+	v.Check(evidence.ID != 0, "id", "must be provided")
+	v.Check(evidence.InvestigationID != 0, "investigation_id", "must be provided")
+	v.Check(evidence.LocationID != 0, "location_id", "must be provided")
+	v.Check(evidence.CreatedByUserID != 0, "created_by_user_id", "must be provided")
+	v.Check(!evidence.CreatedAt.After(time.Now()), "created_at", "must not be in the future")
+	v.Check(evidence.Visibility != nil, "visibility", "must be provided")
+	v.Check(evidence.Version != 0, "version", "must be provided")
 }
 
 type EvidenceModel struct {
