@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 
@@ -124,7 +125,10 @@ func (e EvidenceModel) insert(tx *sql.Tx, evidence *Evidence) error {
 		evidence.Visibility,
 	}
 
-	return tx.QueryRow(query, args...).Scan(&evidence.ID, &evidence.CreatedAt, &evidence.Version)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return tx.QueryRowContext(ctx, query, args...).Scan(&evidence.ID, &evidence.CreatedAt, &evidence.Version)
 }
 
 func (e EvidenceModel) insertText(tx *sql.Tx, evidenceID int64, textNote *TextNote) error {
@@ -192,7 +196,11 @@ func (e EvidenceModel) Get(id int64) (*Evidence, error) {
 
 	var evidence Evidence
 
-	err := e.DB.QueryRow(query, id).Scan(
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	err := e.DB.QueryRowContext(ctx, query, id).Scan(
 		&evidence.ID,
 		&evidence.InvestigationID,
 		&evidence.LocationID,
@@ -232,7 +240,10 @@ func (e EvidenceModel) Update(evidence *Evidence) error {
 		evidence.Version,
 	}
 
-	err := e.DB.QueryRow(query, args...).Scan(&evidence.Version)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := e.DB.QueryRowContext(ctx, query, args...).Scan(&evidence.Version)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -254,7 +265,10 @@ func (e EvidenceModel) Delete(id int64) error {
 	DELETE FROM evidence
 	WHERE id = $1`
 
-	result, err := e.DB.Exec(query, id)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := e.DB.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
 	}
