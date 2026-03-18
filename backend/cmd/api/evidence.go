@@ -103,10 +103,10 @@ func (app *application) updateEvidenceHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	var input struct {
-		InvestigationID int64 `json:"investigation_id"`
-		LocationID      int64 `json:"location_id"`
-		CreatedByUserID int64 `json:"created_by_user_id"`
-		Visibility      *bool `json:"visibility"`
+		InvestigationID *int64 `json:"investigation_id"`
+		LocationID      *int64 `json:"location_id"`
+		CreatedByUserID *int64 `json:"created_by_user_id"`
+		Visibility      *bool  `json:"visibility"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -115,10 +115,21 @@ func (app *application) updateEvidenceHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	evidence.InvestigationID = input.InvestigationID
-	evidence.LocationID = input.LocationID
-	evidence.CreatedByUserID = input.CreatedByUserID
-	evidence.Visibility = input.Visibility
+	if input.InvestigationID != nil {
+		evidence.InvestigationID = *input.InvestigationID
+	}
+
+	if input.LocationID != nil {
+		evidence.LocationID = *input.LocationID
+	}
+
+	if input.CreatedByUserID != nil {
+		evidence.CreatedByUserID = *input.CreatedByUserID
+	}
+
+	if input.Visibility != nil {
+		evidence.Visibility = input.Visibility
+	}
 
 	v := validator.New()
 
@@ -129,7 +140,12 @@ func (app *application) updateEvidenceHandler(w http.ResponseWriter, r *http.Req
 
 	err = app.models.Evidence.Update(evidence)
 	if err != nil {
-		app.serverErrorResponse(w, r, err)
+		switch {
+		case errors.Is(err, data.ErrEditConflict):
+			app.editConflictResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
 		return
 	}
 
