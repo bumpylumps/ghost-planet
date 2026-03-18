@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -40,38 +41,45 @@ func (app *application) createEvidenceHandler(w http.ResponseWriter, r *http.Req
 	v := validator.New()
 
 	if data.ValidateEvidence(v, evidence); !v.Valid() {
-
-	}
-
-	if !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
-	fmt.Fprintf(w, "%+v\n", input)
+	err = app.models.Evidence.FullSync(evidence)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/evidence/%d", evidence.ID))
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"evidence": evidence}, headers)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 func (app *application) showEvidenceHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
 	if err != nil {
-		http.NotFound(w, r)
+		app.notFoundResponse(w, r)
 		return
 	}
 
-	TestVisibility := true // need memory address for pointer bool Visibility
-	evidence := envelope{"evidence": data.Evidence{
-		ID:              id,
-		InvestigationID: 123,
-		LocationID:      666,
-		CreatedByUserID: 435,
-		CreatedAt:       time.Now(),
-		Visibility:      &TestVisibility,
-		Version:         666,
-	}}
-
-	err = app.writeJSON(w, http.StatusOK, evidence, nil)
+	evidence, err := app.models.Evidence.Get(id)
 	if err != nil {
-		app.logger.Println(err)
-		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"evidence": evidence}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
 	}
 }

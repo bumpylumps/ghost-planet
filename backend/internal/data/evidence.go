@@ -2,9 +2,10 @@ package data
 
 import (
 	"database/sql"
-	"fmt"
+	"errors"
 
 	// "encoding/json"
+	"log"
 	"strings"
 	"time"
 
@@ -99,13 +100,10 @@ func ValidatePhoto(v *validator.Validator, photo *Photo) {
 }
 
 func ValidateEvidence(v *validator.Validator, evidence *Evidence) {
-	v.Check(evidence.ID != 0, "id", "must be provided")
 	v.Check(evidence.InvestigationID != 0, "investigation_id", "must be provided")
 	v.Check(evidence.LocationID != 0, "location_id", "must be provided")
 	v.Check(evidence.CreatedByUserID != 0, "created_by_user_id", "must be provided")
-	v.Check(!evidence.CreatedAt.After(time.Now()), "created_at", "must not be in the future")
 	v.Check(evidence.Visibility != nil, "visibility", "must be provided")
-	v.Check(evidence.Version != 0, "version", "must be provided")
 }
 
 type EvidenceModel struct {
@@ -148,7 +146,8 @@ func (e EvidenceModel) insertText(tx *sql.Tx, evidenceID int64, textNote *TextNo
 
 // create insertAudio() and insertPhoto()
 
-func (e EvidenceModel) FullSync(evidence *Evidence, audioNotes []AudioNote, textNotes []TextNote, photos []Photo) error {
+// add audio, text, photo slices to args when ready
+func (e EvidenceModel) FullSync(evidence *Evidence) error {
 	tx, err := e.DB.Begin()
 
 	if err != nil {
@@ -158,7 +157,10 @@ func (e EvidenceModel) FullSync(evidence *Evidence, audioNotes []AudioNote, text
 	defer tx.Rollback()
 
 	// run insert for parent evidence table, get ID
-	e.insert(tx, evidence)
+	err = e.insert(tx, evidence)
+	if err != nil {
+		return err
+	}
 
 	// loop through evidence slices, insert as needed
 	// for i := 0; i < len(textNotes); i++ {
@@ -173,12 +175,43 @@ func (e EvidenceModel) FullSync(evidence *Evidence, audioNotes []AudioNote, text
 	// rollback for failures
 
 	tx.Commit()
-	fmt.Printf("Evidence successfully inserted: %+v\n", evidence)
+	log.Printf("Evidence successfully inserted: %+v\n", evidence)
 	return nil
 }
 
 func (e EvidenceModel) Get(id int64) (*Evidence, error) {
-	return nil, nil
+	if id < 1 {
+		return nil, ErrRecordNotFound
+	}
+
+	query := `
+		SELECT id, investigation_id, location_id, created_by_user_id, created_at, visibility, version
+		FROM evidence
+		WHERE id = $1
+	`
+
+	var evidence Evidence
+
+	err := e.DB.QueryRow(query, id).Scan(
+		&evidence.ID,
+		&evidence.InvestigationID,
+		&evidence.LocationID,
+		&evidence.CreatedByUserID,
+		&evidence.CreatedAt,
+		&evidence.Visibility,
+		&evidence.Version,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &evidence, nil
 }
 
 func (e EvidenceModel) Update(evidence *Evidence) error {
@@ -196,7 +229,7 @@ func (e MockEvidenceModel) insert(evidence *Evidence) error {
 	return nil
 }
 
-func (e MockEvidenceModel) FullSync(evidence *Evidence, audios []AudioNote, texts []TextNote, photos []Photo) error {
+func (e MockEvidenceModel) FullSync(evidence *Evidence) error {
 	return nil
 }
 

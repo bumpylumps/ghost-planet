@@ -14,7 +14,7 @@ type Models struct {
 		Get(id int64) (*Evidence, error)
 		Update(evidence *Evidence) error
 		Delete(id int64) error
-		FullSync(evidence *Evidence, audios []AudioNote, texts []TextNote, photos []Photo) error
+		FullSync(evidence *Evidence /*, audios []AudioNote, texts []TextNote, photos []Photo*/) error
 	}
 }
 
