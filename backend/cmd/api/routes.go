@@ -21,6 +21,7 @@ func (app *application) routes() *httprouter.Router {
 	router.HandlerFunc(http.MethodPost, "/v1/evidence", app.createEvidenceHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/evidence/:id", app.showEvidenceHandler)
 	router.HandlerFunc(http.MethodPut, "/v1/evidence/:id", app.updateEvidenceHandler)
+	router.HandlerFunc(http.MethodDelete, "/v1/evidence/:id", app.deleteEvidenceHandler)
 
 	router.HandlerFunc(http.MethodPost, "/v1/locations", app.createLocationHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/locations/:id", app.showLocationHandler)
