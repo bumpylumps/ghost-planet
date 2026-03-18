@@ -215,7 +215,23 @@ func (e EvidenceModel) Get(id int64) (*Evidence, error) {
 }
 
 func (e EvidenceModel) Update(evidence *Evidence) error {
-	return nil
+	query := `
+	UPDATE evidence
+	SET investigation_id = $1, location_id = $2, created_by_user_id = $3, created_at = $4, visibility = $5, version = version + 1
+	WHERE id = $6
+	RETURNING version
+	`
+
+	args := []interface{}{
+		evidence.InvestigationID,
+		evidence.LocationID,
+		evidence.CreatedByUserID,
+		evidence.CreatedAt,
+		evidence.Visibility,
+		evidence.ID,
+	}
+
+	return e.DB.QueryRow(query, args...).Scan(&evidence.Version)
 }
 
 func (e EvidenceModel) Delete(id int64) error {

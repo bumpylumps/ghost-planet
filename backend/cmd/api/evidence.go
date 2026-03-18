@@ -83,3 +83,58 @@ func (app *application) showEvidenceHandler(w http.ResponseWriter, r *http.Reque
 		app.serverErrorResponse(w, r, err)
 	}
 }
+
+func (app *application) updateEvidenceHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := app.readIDParam(r)
+	if err != nil {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	evidence, err := app.models.Evidence.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	var input struct {
+		InvestigationID int64 `json:"investigation_id"`
+		LocationID      int64 `json:"location_id"`
+		CreatedByUserID int64 `json:"created_by_user_id"`
+		Visibility      *bool `json:"visibility"`
+	}
+
+	err = app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	evidence.InvestigationID = input.InvestigationID
+	evidence.LocationID = input.LocationID
+	evidence.CreatedByUserID = input.CreatedByUserID
+	evidence.Visibility = input.Visibility
+
+	v := validator.New()
+
+	if data.ValidateEvidence(v, evidence); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	err = app.models.Evidence.Update(evidence)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"evidence": evidence}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
