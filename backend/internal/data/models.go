@@ -16,7 +16,7 @@ type Models struct {
 		Update(evidence *Evidence) error
 		Delete(id int64) error
 		FullSync(evidence *Evidence /*, audios []AudioNote, texts []TextNote, photos []Photo*/) error
-		GetAll(locationID int, filters Filters) ([]*Evidence, error)
+		GetAll(locationID int, createdByUserID int, filters Filters) ([]*Evidence, error)
 	}
 }
 

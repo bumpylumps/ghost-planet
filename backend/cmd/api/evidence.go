@@ -181,7 +181,8 @@ func (app *application) deleteEvidenceHandler(w http.ResponseWriter, r *http.Req
 
 func (app *application) listEvidenceHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		LocationID int
+		LocationID      int
+		CreatedByUserID int
 		data.Filters
 	}
 
@@ -189,7 +190,8 @@ func (app *application) listEvidenceHandler(w http.ResponseWriter, r *http.Reque
 
 	qs := r.URL.Query()
 
-	input.LocationID = app.readInt(qs, "location", 0, v)
+	input.LocationID = app.readInt(qs, "location_id", 0, v)
+	input.CreatedByUserID = app.readInt(qs, "created_by_user_id", 0, v)
 
 	input.Filters.Page = app.readInt(qs, "page", 1, v)
 	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
@@ -202,7 +204,7 @@ func (app *application) listEvidenceHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	evidences, err := app.models.Evidence.GetAll(input.LocationID, input.Filters)
+	evidences, err := app.models.Evidence.GetAll(input.LocationID, input.CreatedByUserID, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

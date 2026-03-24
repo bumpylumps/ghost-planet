@@ -285,17 +285,19 @@ func (e EvidenceModel) Delete(id int64) error {
 	return nil
 }
 
-func (e EvidenceModel) GetAll(locationID int, filters Filters) ([]*Evidence, error) {
+func (e EvidenceModel) GetAll(locationID int, createdByUserId int, filters Filters) ([]*Evidence, error) {
 	query := `
 		SELECT id, investigation_id, location_id, created_by_user_id, created_at, visibility, version
 		FROM evidence
+		WHERE (location_id = $1 OR $1 = 0)
+		AND (created_by_user_id = $2 OR $2 = 0)
 		ORDER BY id
 	`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := e.DB.QueryContext(ctx, query)
+	rows, err := e.DB.QueryContext(ctx, query, locationID, createdByUserId)
 	if err != nil {
 		return nil, err
 	}
@@ -350,6 +352,6 @@ func (e MockEvidenceModel) Delete(id int64) error {
 	return nil
 }
 
-func (e MockEvidenceModel) GetAll(locationid int, filters Filters) ([]*Evidence, error) {
+func (e MockEvidenceModel) GetAll(locationid int, createdByUserID int, filters Filters) ([]*Evidence, error) {
 	return nil, nil
 }
