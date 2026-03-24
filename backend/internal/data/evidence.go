@@ -285,6 +285,48 @@ func (e EvidenceModel) Delete(id int64) error {
 	return nil
 }
 
+func (e EvidenceModel) GetAll(locationID int, filters Filters) ([]*Evidence, error) {
+	query := `
+		SELECT id, investigation_id, location_id, created_by_user_id, created_at, visibility, version
+		FROM evidence
+		ORDER BY id
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := e.DB.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	evidences := []*Evidence{}
+
+	for rows.Next() {
+		var evidence Evidence
+
+		err := rows.Scan(
+			&evidence.ID,
+			&evidence.InvestigationID,
+			&evidence.LocationID,
+			&evidence.CreatedByUserID,
+			&evidence.CreatedAt,
+			&evidence.Visibility,
+			&evidence.Version,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		evidences = append(evidences, &evidence)
+	}
+
+	return evidences, nil
+}
+
 // testing
 type MockEvidenceModel struct{}
 
@@ -306,4 +348,8 @@ func (e MockEvidenceModel) Update(evidence *Evidence) error {
 
 func (e MockEvidenceModel) Delete(id int64) error {
 	return nil
+}
+
+func (e MockEvidenceModel) GetAll(locationid int, filters Filters) ([]*Evidence, error) {
+	return nil, nil
 }
