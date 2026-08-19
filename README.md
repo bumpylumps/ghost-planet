@@ -1,12 +1,12 @@
-# Ghost Planet
+# 👻 Ghost Planet
 
 Ghost Planet is a paranormal investigation platform for organizing sightings, investigations, and field evidence.
 
-## Project Status
+### Project Status
 
 This project is still early in development.
 
-## Features
+### Features
 
 Ghost Planet is being built to support:
 
@@ -18,7 +18,7 @@ Ghost Planet is being built to support:
 
 More features will be added as development continues.
 
-## Documentation
+### Documentation
 
 - [Backend README](backend/README.md)
 - [Frontend README](frontend/README.md)

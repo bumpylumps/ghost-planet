@@ -3,7 +3,7 @@
 ## Requirements
 
 - Go 1.25.6 or newer
-- PostgreSQL
+- PostgreSQL 18.6
 - `psql` for the `make connect/db` helper
 
 ## Configuration
